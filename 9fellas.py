@@ -114,8 +114,8 @@ def init_workers():
     m.start()
 
 @app.template_filter()
-def env_override(value, key):
-    return os.getenv(key, value)
+def get_url(value, key):
+    return request.args.get(key, value)
 
 @app.route('/addthread')
 def addthread():
@@ -170,7 +170,10 @@ def applicationsdetails():
     finaldict = OrderedDict()
     for appname in sorted(appdicts):
         instances = json.loads(appdicts.get(appname))
-        finaldict.__setitem__(appname,instances)
+        instance_map = OrderedDict()
+        for key in sorted(instances):
+            instance_map.__setitem__(key,instances.get(key))
+        finaldict.__setitem__(appname,instance_map)
     return render_template('animals_squared.html', appdicts=finaldict)
 
 @app.route('/instances')

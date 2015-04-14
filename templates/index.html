@@ -25,7 +25,11 @@
   </div>
   <script type="text/javascript">
   function instances(){
-    $.get( "/{{ "instances" | env_override('url') }}", function( data ) {
+    {% if request.args['a'] == 'all-apps' %}
+    $.get( "/all-apps", function( data ) {
+    {% else  %}
+    $.get( "instances", function( data ) {
+    {% endif %}
       $( "#result" ).empty();
       $( "#result" ).html( data );
     });
