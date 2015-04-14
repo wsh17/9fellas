@@ -1,0 +1,34 @@
+<div style="margin: 0px auto;text-align: center;">
+  <div style="vertical-align: bottom;display: inline-block;text-align: center;width:120px;margin-bottom:20px;margin-right:10px">
+    <img src="static/images/redis.png" width="50%" height="50%"/>
+  </div>
+</div>
+
+<div style="margin: 0px auto;text-align: center;">
+<table>
+{% for appname,instances in appdicts.iteritems() %}
+	<tr><td>	
+			<b>Application - {{appname}}</b>
+			{% for instance,threads in instances.iteritems() %}
+				<div style="margin-bottom:20px;margin-right:10px;">
+					<div width="100%;">
+						<b>Instance - #{{instance}}</b>
+					</div>
+					<div width="100%;">
+						<table>
+							<tr>
+							{% for i in range(0,threads|int) %}
+							  <td>
+								  <img src="static/images/{{ i }}a.png" width="25%" height="25%"/>
+								  <span style="">#{{ i }} </span>
+							  </td>
+							{% endfor %}
+							</tr>
+						</table>
+					</div>
+				</div>
+			{% endfor %}			
+	</tr></td>
+{% endfor %}
+</table>
+</div>
