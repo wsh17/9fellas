@@ -132,6 +132,7 @@ def addthread():
     print 'HSET result %s'%result
     print db.hgetall(application_name)
     return json.dumps({'message':'success'})
+
 @app.route('/deletethread')
 def deletethread():
     """
@@ -159,7 +160,7 @@ def update():
     return json.dumps({'message':'success'})
 
 
-@app.route('/applicationsdetails')
+@app.route('/all-apps')
 def applicationsdetails():
     """
     This is the endpoint for providing all info about the applications
@@ -194,5 +195,6 @@ def index():
     return render_template('index.html')
 
 if __name__ == "__main__":
+
     init_workers()
     app.run(host='0.0.0.0', port=port, debug=True)
