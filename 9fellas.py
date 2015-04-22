@@ -10,16 +10,16 @@ import requests
 
 from Queue import Queue
 
-REGISTRAR_URL = 'http://9fellas.cfapps.io/update'
+REGISTRAR_URL = 'http://pws-9fellas.cfapps.io/update'
 
 app = Flask(__name__)
 port = int(os.getenv("PORT"))
 vcap = json.loads(os.environ['VCAP_SERVICES'])
-svc = vcap['rediscloud'][0]['credentials']
+svc = vcap['p-redis'][0]['credentials']
 
-db = redis.StrictRedis(host=svc["hostname"], port=svc["port"], password=svc["password"],db=0)
-
+db = redis.StrictRedis(host=svc["host"], port=svc["port"], password=svc["password"],db=0)
 application_name = json.loads(os.environ['VCAP_APPLICATION'])['application_name']
+
 
 class Producer(Thread):
     """
@@ -113,10 +113,6 @@ def init_workers():
     c.start()
     m.start()
 
-@app.template_filter()
-def get_url(value, key):
-    return request.args.get(key, value)
-
 @app.route('/addthread')
 def addthread():
     """
@@ -173,7 +169,9 @@ def applicationsdetails():
         instance_map = OrderedDict()
         for key in sorted(instances):
             instance_map.__setitem__(key,instances.get(key))
-        finaldict.__setitem__(appname,instance_map)
+        aname = appname.split("-")
+        cloud = aname[0]
+        finaldict.__setitem__(cloud,instance_map)
     return render_template('animals_squared.html', appdicts=finaldict)
 
 @app.route('/instances')
@@ -187,7 +185,9 @@ def instances():
     for key in sorted(mydict):
         ordered.__setitem__(key,mydict.get(key))
     mylist = []
-    return render_template('animals.html', mydict=ordered)
+    aname = application_name.split("-")
+    cloud = aname[0]
+    return render_template('animals.html', mydict=ordered, cloud=cloud)
 
 
 @app.route('/')

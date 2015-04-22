@@ -1,27 +1,15 @@
 <div style="margin: 0px auto;text-align: center;">
   <div style="vertical-align: bottom;display: inline-block;text-align: center;width:120px;margin-bottom:20px;margin-right:10px">
-    <img src="static/images/redis.png" width="50%" height="50%"/>
+    <br><img src="static/images/{{ cloud }}.png"/>
   </div>
 </div>
 
 <div style="margin: 0px auto;text-align: center;">
 {% for instance,threads in mydict.iteritems() %}
 	<div style="margin-bottom:20px;margin-right:10px;">
-		<div width="100%;">
-			<b>Instance - #{{instance}}</b>
-		</div>
-		<div width="100%;">
-			<table>
-				<tr>
 				{% for i in range(0,threads|int) %}
-				  <td>
-					  <img src="static/images/{{ i }}a.png" width="25%" height="25%"/>
-					  <span style="">#{{ i }} </span>
-				  </td>
+					  <img src="static/images/{{ i }}a.png" height="32" width="32" />
 				{% endfor %}
-				</tr>
-			</table>
 		</div>
-	</div>
 {% endfor %}
 </div>
