@@ -25,7 +25,6 @@ db = redis.StrictRedis(host=svc["hostname"], port=svc["port"], password=svc["pas
 
 application_name = json.loads(os.environ['VCAP_APPLICATION'])['application_name']
 
-
 class Producer(Thread):
     """
     Background thread for fetching instance info
