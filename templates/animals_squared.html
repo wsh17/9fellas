@@ -1,6 +1,6 @@
 <br><div style="margin: 0px auto;text-align: center;">
 {% for appname,instances in appdicts.iteritems() %}
-<img src="static/images/{{ appname }}.png" />
+{{ appname }}
 			{% for instance,threads in instances.iteritems() %}
         <div style="margin: 0px auto;">
 							{% for i in range(0,threads|int) %}
