@@ -169,9 +169,7 @@ def applicationsdetails():
         instance_map = OrderedDict()
         for key in sorted(instances):
             instance_map.__setitem__(key,instances.get(key))
-        aname = appname.split("-")
-        cloud = aname[0]
-        finaldict.__setitem__(cloud,instance_map)
+        finaldict.__setitem__(appname,instance_map)
     return render_template('animals_squared.html', appdicts=finaldict)
 
 @app.route('/instances')
