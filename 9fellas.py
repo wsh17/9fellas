@@ -10,18 +10,27 @@ import requests
 
 from Queue import Queue
 
-REGISTRAR_URL = 'http://pws-9fellas.cfapps.io/update'
+###REGISTRAR_URL = 'http://pws-9fellas.cfapps.io/update'
+REGISTRAR_URL = 'http://' + os.getenv("dashboard") + '/update'
 
 app = Flask(__name__)
 port = int(os.getenv("PORT"))
 vcap = json.loads(os.environ['VCAP_SERVICES'])
 
 # for a local CF (not pivotol web services) change this next bit to svc = vcap['p-redis'][0]['credentials']
-svc = vcap['rediscloud'][0]['credentials']
+svc = ""
+try:
+    svc = vcap['rediscloud'][0]['credentials']
+except:
+    svc = vcap['p-redis'][0]['credentials']
+
 
 # for a local CF (not pivotal web services) change this next bit to
-# db = redis.StrictRedis(host=svc["host"], port=svc["port"], password=svc["password"],db=0)
-db = redis.StrictRedis(host=svc["hostname"], port=svc["port"], password=svc["password"],db=0)
+db = ""
+try:
+    db = redis.StrictRedis(host=svc["hostname"], port=svc["port"], password=svc["password"],db=0)
+except:
+    db = redis.StrictRedis(host=svc["host"], port=svc["port"], password=svc["password"],db=0)
 
 application_name = json.loads(os.environ['VCAP_APPLICATION'])['application_name']
 
@@ -160,7 +169,7 @@ def update():
     return json.dumps({'message':'success'})
 
 
-@app.route('/all-apps')
+@app.route('/dashboard')
 def applicationsdetails():
     """
     This is the endpoint for providing all info about the applications

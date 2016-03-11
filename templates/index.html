@@ -25,8 +25,8 @@
   </div>
   <script type="text/javascript">
   function instances(){
-    {% if request.args['a'] == 'all-apps' %}
-    $.get( "/all-apps", function( data ) {
+    {% if request.args['a'] == 'dashboard' %}
+    $.get( "/dashboard", function( data ) {
     {% else  %}
     $.get( "instances", function( data ) {
     {% endif %}
@@ -34,7 +34,7 @@
       $( "#result" ).html( data );
     });
   }
-  var t=setInterval(instances,1000);
+  var t=setInterval(instances,10000);
   </script>
 </body>
 </html>
