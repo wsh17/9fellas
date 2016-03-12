@@ -10,7 +10,6 @@ import requests
 
 from Queue import Queue
 
-###REGISTRAR_URL = 'http://pws-9fellas.cfapps.io/update'
 REGISTRAR_URL = 'http://' + os.getenv("dashboard") + '/update'
 DASHBOARD_URL = 'http://' + os.getenv("dashboard") + '?a=dashboard'
 
@@ -88,13 +87,14 @@ class MasterUpdater(Thread):
     """
     This background thread will update the aggregator/registrar app at provided url
     """
-    def __init__(self,db,appname):
+    def __init__(self,db,appname,cloud):
         """
         Constructor
         """
         Thread.__init__(self)
         self.db = db
         self.appname = appname
+        self.cloud = cloud
     def run(self):
         """
         Run implementation of background thread which updates the aggregator
@@ -103,7 +103,7 @@ class MasterUpdater(Thread):
             try:
                 appinfo = self.db.hgetall(self.appname)
                 appinfo_str = json.dumps(appinfo)
-                data = {'applicationname':self.appname,'appinfo':appinfo_str}
+                data = {'applicationname':self.appname,'appinfo':appinfo_str, 'cloud':self.cloud}
                 response = requests.post(REGISTRAR_URL, data=data)
                 time.sleep(2)
             except :
@@ -122,38 +122,38 @@ def init_workers():
     p.daemon = True
     c = Consumer(party_queue)
     c.deamon= True
-    m = MasterUpdater(db,application_name)
+    m = MasterUpdater(db,application_name,cloud)
     m.deamon = True
     p.start()
     c.start()
     m.start()
 
-@app.route('/addthread')
-def addthread():
+@app.route('/addfella')
+def addfella():
     """
-        This endpoint is for adding threads to the application.
-        Loadbalancer decids to go for which instances and based on that thread is added to it.
+        This endpoint is for adding fellas to the application.
+        Loadbalancer decids to go for which instances and based on that fella is added to it.
     """
     instance_id = os.getenv("CF_INSTANCE_INDEX")
     print 'Instance Id ****************%s'%instance_id
-    thread_count = int(db.hget(application_name,instance_id))
-    thread_count+=1
-    print 'Threadcount ****************%s'%thread_count
-    result = db.hset(application_name,str(instance_id),str(thread_count))
+    fella_count = int(db.hget(application_name,instance_id))
+    fella_count+=1
+    print 'fellacount ****************%s'%fella_count
+    result = db.hset(application_name,str(instance_id),str(fella_count))
     print 'HSET result %s'%result
     print db.hgetall(application_name)
     return json.dumps({'message':'success'})
 
-@app.route('/deletethread')
-def deletethread():
+@app.route('/deletefella')
+def deletefella():
     """
-        This endpoint is for deleting threads to the application.
+        This endpoint is for deleting fellas to the application.
     """
     instance_id = os.getenv("CF_INSTANCE_INDEX")
     print 'Instance Id **************%s'%instance_id
-    thread_count = int(db.hget(application_name,instance_id))
-    thread_count-=1
-    db.hset(application_name,instance_id,thread_count)
+    fella_count = int(db.hget(application_name,instance_id))
+    fella_count-=1
+    db.hset(application_name,instance_id,fella_count)
 
     return json.dumps({'message':'success'})
 
@@ -165,9 +165,12 @@ def update():
     """
     appname = request.form['applicationname']
     appdetails = request.form['appinfo']
+    appcloud = request.form['cloud']
+
     obj = json.loads(appdetails)
     if appname and obj:
         db.hset('applications', appname, appdetails)
+        db.hset('clouds', appname, appcloud)
     return json.dumps({'message':'success'})
 
 
@@ -185,13 +188,18 @@ def applicationsdetails():
         for key in sorted(instances):
             instance_map.__setitem__(key,instances.get(key))
         finaldict.__setitem__(appname,instance_map)
-    return render_template('animals_squared.html', appdicts=finaldict)
+
+    clouddicts = db.hgetall('clouds')
+    finalcloud = OrderedDict()
+    for appname in sorted(clouddicts):
+        finalcloud.__setitem__(appname, clouddicts.get(appname))
+    return render_template('animals_squared.html', appdicts=finaldict, clouddicts=finalcloud)
 
 @app.route('/instances')
 def instances():
     """
-        This will list out all the instances and threads per application.
-        An application can see only it's threads and instances.
+        This will list out all the instances and fellas per application.
+        An application can see only it's fellas and instances.
     """
     mydict = db.hgetall(application_name)
     ordered = OrderedDict()

@@ -1,0 +1,12 @@
+---
+applications:
+- name: 9fellas-mj
+  memory: 256M
+  instances: 2
+  hosts:
+  -  9fellas-mj
+  env:
+    dashboard: dashboard-9fellas-mj.cfapps.io
+    cloud: openstack
+  services:
+  -  redis

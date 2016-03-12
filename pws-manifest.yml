@@ -1,10 +1,10 @@
 ---
 applications:
-- name: aws-9fellas-mj
+- name: 9fellas-mj
   memory: 256M
   instances: 2
   hosts:
-  -  aws-9fellas-mj
+  -  9fellas-mj
   -  dashboard-9fellas-mj
   env:
     dashboard: dashboard-9fellas-mj.cfapps.io
