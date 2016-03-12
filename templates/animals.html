@@ -1,6 +1,7 @@
 <p>&nbsp;</p>
 
 <div style="margin: 0px auto;text-align: center;">
+{{ appname }}
 {% for instance,threads in mydict.iteritems() %}
 	<div style="margin-bottom:20px;margin-right:10px;">
 				{% for i in range(0,threads|int) %}
@@ -8,4 +9,6 @@
 				{% endfor %}
 		</div>
 {% endfor %}
+<p>&nbsp;</p>
+<a href="{{dashboard}}">Dashboard</a>
 </div>

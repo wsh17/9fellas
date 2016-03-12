@@ -12,10 +12,12 @@ from Queue import Queue
 
 ###REGISTRAR_URL = 'http://pws-9fellas.cfapps.io/update'
 REGISTRAR_URL = 'http://' + os.getenv("dashboard") + '/update'
+DASHBOARD_URL = 'http://' + os.getenv("dashboard") + '?a=dashboard'
 
 app = Flask(__name__)
 port = int(os.getenv("PORT"))
 vcap = json.loads(os.environ['VCAP_SERVICES'])
+cloud = os.getenv("cloud")
 
 # for a local CF (not pivotol web services) change this next bit to svc = vcap['p-redis'][0]['credentials']
 svc = ""
@@ -32,7 +34,7 @@ try:
 except:
     db = redis.StrictRedis(host=svc["host"], port=svc["port"], password=svc["password"],db=0)
 
-application_name = json.loads(os.environ['VCAP_APPLICATION'])['application_name']
+application_name = json.loads(os.environ['VCAP_APPLICATION'])['application_uris'][0]
 
 class Producer(Thread):
     """
@@ -196,9 +198,7 @@ def instances():
     for key in sorted(mydict):
         ordered.__setitem__(key,mydict.get(key))
     mylist = []
-    aname = application_name.split("-")
-    cloud = aname[0]
-    return render_template('animals.html', mydict=ordered, cloud=cloud)
+    return render_template('animals.html', mydict=ordered, cloud=cloud, appname=application_name, dashboard=DASHBOARD_URL)
 
 
 @app.route('/')
