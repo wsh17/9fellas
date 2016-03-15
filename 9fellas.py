@@ -137,12 +137,16 @@ def addfella():
     instance_id = os.getenv("CF_INSTANCE_INDEX")
     print 'Instance Id ****************%s'%instance_id
     fella_count = int(db.hget(application_name,instance_id))
-    fella_count+=1
-    print 'fellacount ****************%s'%fella_count
-    result = db.hset(application_name,str(instance_id),str(fella_count))
-    print 'HSET result %s'%result
-    print db.hgetall(application_name)
-    return json.dumps({'message':'success'})
+    message = 'success'
+    if fella_count<9:
+        fella_count+=1
+        print 'fellacount ****************%s'%fella_count
+        result = db.hset(application_name,str(instance_id),str(fella_count))
+        print 'HSET result %s'%result
+        print db.hgetall(application_name)
+    else:
+        message = 'failed - no more fellas'
+    return json.dumps({'message':message})
 
 @app.route('/deletefella')
 def deletefella():
@@ -152,10 +156,13 @@ def deletefella():
     instance_id = os.getenv("CF_INSTANCE_INDEX")
     print 'Instance Id **************%s'%instance_id
     fella_count = int(db.hget(application_name,instance_id))
-    fella_count-=1
-    db.hset(application_name,instance_id,fella_count)
-
-    return json.dumps({'message':'success'})
+    message = 'success'
+    if fella_count>1:
+        fella_count-=1
+        db.hset(application_name,instance_id,fella_count)
+    else:
+        message = 'failed - must have at least one fellas'
+    return json.dumps({'message':message})
 
 @app.route('/update',methods=['POST'])
 def update():
