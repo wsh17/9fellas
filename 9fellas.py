@@ -1,14 +1,16 @@
 import os
 import json
-from threading import Thread
+from threading import Thread, current_thread
 import time
 from time import sleep
 from flask import Flask, json, render_template, request
 import redis
 from collections import OrderedDict
 import requests
-
 from Queue import Queue
+import sys
+from signal import *
+
 
 REGISTRAR_URL = 'http://' + os.getenv("dashboard") + '/update'
 DASHBOARD_URL = 'http://' + os.getenv("dashboard") + '?a=dashboard'
@@ -17,6 +19,7 @@ app = Flask(__name__)
 port = int(os.getenv("PORT"))
 vcap = json.loads(os.environ['VCAP_SERVICES'])
 cloud = os.getenv("cloud")
+kill_queue = Queue()
 
 # for a local CF (not pivotol web services) change this next bit to svc = vcap['p-redis'][0]['credentials']
 svc = ""
@@ -39,33 +42,46 @@ class Producer(Thread):
     """
     Background thread for fetching instance info
     """
-    def __init__(self,queue):
+    def __init__(self,queue,killqueue):
         """
         Constructor
         """
         Thread.__init__(self)
         self.queue = queue
+        self.killqueue = killqueue
+
     def run(self):
+        print '%s - Producer thread starting now' % (current_thread())
+
         """
-        This is the run implementation of the background thread , which fetchs the instaces info.
+        This is the run implementation of the background thread , which fetches the instance info.
         """
-        while True :
+        self.runFlag = True
+        while self.runFlag :
             try:
+                if self.killqueue.empty()==False:
+                    print '%s - Producer thread will exit.' % (current_thread())
+                    self.runFlag = False
+                    break
+
                 instance_id = os.getenv("CF_INSTANCE_INDEX")
                 mydict = db.hgetall(application_name)
                 if instance_id not in mydict :
                     self.queue.put(instance_id)
+                time.sleep(1)
             except :
                 pass
             finally:
                 pass
+        print '%s - Producer thread exit now' % (current_thread())
+
 class Consumer(Thread):
     """
-    Backgrdound thread for fetching from Queue and updating redis
+    Background thread for fetching from Queue and updating redis
     """
     def __init__(self,queue):
         """
-        Constrcutor
+        Constructor
         """
         Thread.__init__(self)
         self.queue = queue
@@ -76,8 +92,9 @@ class Consumer(Thread):
         """
         while True :
             try :
-                instance_id = self.queue.get()
+                instance_id = self.queue.get() # blocks until queue is not empty
                 db.hset(application_name,instance_id,1)
+                time.sleep(1)
             except:
                 pass
             finally:
@@ -118,7 +135,7 @@ def init_workers():
     All are deamon threads.
     """
     party_queue = Queue()
-    p = Producer(party_queue)
+    p = Producer(party_queue,kill_queue)
     p.daemon = True
     c = Consumer(party_queue)
     c.deamon= True
@@ -145,7 +162,9 @@ def addfella():
         print 'HSET result %s'%result
         print db.hgetall(application_name)
     else:
-        message = 'failed - no more fellas'
+        message = 'failed - no more fellas for instance %s'%instance_id
+        print message
+
     return json.dumps({'message':message})
 
 @app.route('/deletefella')
@@ -161,7 +180,9 @@ def deletefella():
         fella_count-=1
         db.hset(application_name,instance_id,fella_count)
     else:
-        message = 'failed - must have at least one fellas'
+        message = 'failed - must have at least one fellas for instance %s'%instance_id
+        print message
+
     return json.dumps({'message':message})
 
 @app.route('/update',methods=['POST'])
@@ -178,6 +199,23 @@ def update():
     if appname and obj:
         db.hset('applications', appname, appdetails)
         db.hset('clouds', appname, appcloud)
+
+    return json.dumps({'message':'success'})
+
+@app.route('/clearDashboard')
+def cleardashboard():
+    """
+    This endpoint clears the redis dashboard so it will show only currently connected clients
+    """
+    appdicts = db.hgetall('applications')
+    for appname in sorted(appdicts):
+        db.hdel('applications', appname)
+
+    clouddicts = db.hgetall('clouds')
+    for appname in sorted(clouddicts):
+        db.hdel('clouds', appname)
+
+    print 'cleared the dashboard'
     return json.dumps({'message':'success'})
 
 
@@ -223,7 +261,24 @@ def index():
     """
     return render_template('index.html')
 
-if __name__ == "__main__":
+
+def handle_cleanup(*args):
+    print 'Application exit'
+    kill_queue.put('stop')
+    instance_id = os.getenv("CF_INSTANCE_INDEX")
+    result = db.hdel(application_name,instance_id)
+    left = db.hlen(application_name)
+    print 'Instance %s Removed, Result=%s, Left=%d' % (instance_id, result, left)
+    time.sleep(1)
+    os._exit(0)
+
+
+def main():
+    for sig in (SIGABRT, SIGINT, SIGTERM):
+        signal(sig, handle_cleanup)
 
     init_workers()
-    app.run(host='0.0.0.0', port=port, debug=True)
+    app.run(host='0.0.0.0', port=port)
+
+if __name__=='__main__':
+    main()
