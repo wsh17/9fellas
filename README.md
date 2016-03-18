@@ -16,12 +16,12 @@ Application instances send their data to a single public dashboard URL based on 
 Looking to run 9fellas on Cloud Foundry? Here are some sample instructions for deploying 9fellas onto the hosted Pivotal Web Services cloud:
 
 1. Make sure you have Git installed, available from https://git-scm.com/
-2. Login to your Cloud Foundry cloud. You can sign up for a free trial from http://run.pivotal.io. Once you are signed up, login to your Pivotal Web
+2. Make sure your have the Cloud Foundry CF CLI installed, available from http://docs.run.pivotal.io/devguide/installcf/install-go-cli.html
+3. Login to your Cloud Foundry cloud. You can sign up for a free trial from http://run.pivotal.io. Once you are signed up, login to your Pivotal Web
 Services cloud with:<br/>
    ```
    cf login -a api.run.pivotal.io
    ```
-3. Make sure your have the Cloud Foundry CF CLI installed, available from http://docs.run.pivotal.io/devguide/installcf/install-go-cli.html
 4. Create a new local directory, and clone the 9fellas repo into the new local directory.  From this point on you'll work from your new local directory.<br/>
    ```
    git clone https://github.com/mjeffries-pivotal/9fellas.git
@@ -32,7 +32,6 @@ to specify the metadata for your application.  Samples for **pws** and **opensta
 created a new manifest file, also update the "cloud" value to one of the values mentioned above.  The "dashboard" values should point to the hostname where
 you want the consolidated dashboard to run.  The example below is for PWS, where PWS is also hosting the dashboard.<br/>
    ```
-   ---
    applications:
    - name: 9fellas-mj
      memory: 256M
