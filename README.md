@@ -31,10 +31,10 @@ to specify the metadata for your application.  Samples for **pws** and **opensta
 6. Update your manifest file to specify the name of the application, replacing "mj" below with your initials or something else to make it unique.  If you've
 created a new manifest file, also update the "cloud" value to one of the values mentioned above.  The "dashboard" values should point to the hostname where
 you want the consolidated dashboard to run.  The example below is for PWS, where PWS is also hosting the dashboard.<br/>
-   ```
-   ---
-   applications:
-   - name: 9fellas-mj
+    ```
+    ---
+    applications:
+    - name: 9fellas-mj
      memory: 256M
      instances: 2
      hosts:
@@ -45,14 +45,14 @@ you want the consolidated dashboard to run.  The example below is for PWS, where
        cloud: pws
      services:
      -  redis
-   ```
+    ```
 7. Notice that this manifest has two "hosts" values defined.  This is only required for the manifest file associated with the cloud where
 the dashboard lives.  All other manifest files do not need the "hosts" section - see the openstack manifest file as an example.
 8. Create a shared Redis datastore service. PWS offers a free tier 30mb plan that you can provision with:<br/>
    ```
-   cf create-service rediscloud 30mb redis<br/>
+   cf create-service rediscloud 30mb redis
    ```
-  If you are running on your own Pivotal Cloud Foundry instance, use this instead:<br/>
+  <br/>If you are running on your own Pivotal Cloud Foundry instance, use this instead:<br/>
    ```
    cf create-service p-redis shared-vm redis
    ```
