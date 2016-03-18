@@ -32,19 +32,19 @@ to specify the metadata for your application.  Samples for **pws** and **opensta
 created a new manifest file, also update the "cloud" value to one of the values mentioned above.  The "dashboard" values should point to the hostname where
 you want the consolidated dashboard to run.  The example below is for PWS, where PWS is also hosting the dashboard.<br/>
 <pre><code>
-        ---
-        applications:
-        - name: 9fellas-mj
-         memory: 256M
-         instances: 2
-         hosts:
-         -  9fellas-mj
-         -  dashboard-9fellas-mj
-         env:
-           dashboard: dashboard-9fellas-mj.cfapps.io
-           cloud: pws
-         services:
-         -  redis
+---
+applications:
+- name: 9fellas-mj
+ memory: 256M
+ instances: 2
+ hosts:
+ -  9fellas-mj
+ -  dashboard-9fellas-mj
+ env:
+   dashboard: dashboard-9fellas-mj.cfapps.io
+   cloud: pws
+ services:
+ -  redis
 </code></pre>
 7. Notice that this manifest has two "hosts" values defined.  This is only required for the manifest file associated with the cloud where
 the dashboard lives.  All other manifest files do not need the "hosts" section - see the openstack manifest file as an example.
