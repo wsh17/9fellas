@@ -63,20 +63,24 @@ the dashboard lives.  All other manifest files do not need the "hosts" section -
    cf push -f xyz-manifest.yml
    ```
 10. Bring up your application in your browser using the first of the "urls" displayed when the push is completed, for example:<br/>
-   ```
-   requested state: started
-   instances: 2/2
-   usage: 256M x 2 instances
-   urls: 9fellas-mj.cfapps.io, dashboard-9fellas-mj.cfapps.io
-   last uploaded: Fri Mar 18 15:17:02 UTC 2016
-   stack: cflinuxfs2
-   buildpack: python 1.5.4
-   ```
+
+    ```
+    requested state: started
+    instances: 2/2
+    usage: 256M x 2 instances
+    urls: 9fellas-mj.cfapps.io, dashboard-9fellas-mj.cfapps.io
+    last uploaded: Fri Mar 18 15:17:02 UTC 2016
+    stack: cflinuxfs2
+    buildpack: python 1.5.4
+    ```
+
 11. Now you can add or delete fellas, and view the dashboard, which will show all the fellas from all the clouds where the application has been installed.
 12. Scale the app up to 6 instances to see more animal icons appear using:<br/>
-   ```
-   cf scale my-app-name -i 6
-   ```
+
+    ```
+    cf scale my-app-name -i 6
+    ```
+
   You can also scale the application using the PWS/Apps Manager UI.
 
 Afterwards, tear down your app with:
