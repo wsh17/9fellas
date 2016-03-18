@@ -18,14 +18,14 @@ Looking to run 9fellas on Cloud Foundry? Here are some sample instructions for d
 1. Make sure you have Git installed, available from https://git-scm.com/
 2. Login to your Cloud Foundry cloud. You can sign up for a free trial from http://run.pivotal.io. Once you are signed up, login to your Pivotal Web
 Services cloud with:
-  ```
-  cf login -a api.run.pivotal.io
-  ```
+   ```
+   cf login -a api.run.pivotal.io
+   ```
 3. Make sure your have the Cloud Foundry CF CLI installed, available from http://docs.run.pivotal.io/devguide/installcf/install-go-cli.html
 4. Create a new local directory, and clone the 9fellas repo into the new local directory.  From this point on you'll work from your new local directory.
-  ```
-  git clone https://github.com/mjeffries-pivotal/9fellas.git
-  ```
+   ```
+   git clone https://github.com/mjeffries-pivotal/9fellas.git
+   ```
 5. Review the sample xyz-manifest.yml files, where "xyz" represents the IaaS for your targeted Cloud Foundry cloud.  Manifest files are optional but helpful
 to specify the metadata for your application.  Samples for *pws* and *openstack* are provided, just copy one of those if you are running on *aws*, *vcd*, or *vsphere*.
 6. Update your manifest file to specify the name of the application, replacing "mj" below with your initials or something else to make it unique.  If you've
