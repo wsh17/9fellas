@@ -6,30 +6,37 @@ A simple 12 Factor-based multi-cloud demo application written in Python that vis
 
 - Add fellas by using the /addfella endpoint or by clicking add
 - Delete fellas using /deletefella endpoint or by clicking delete
-- Application instances send their data to a single public dashboard URL based on the "dashboard" environment variable specified in a manifest file.
+
+Each line represents an instance of the application, and each instance can host up to 9 fellas.
+
+Application instances send their data to a single public dashboard URL based on the "dashboard" environment variable specified in a manifest file.
 
 ## Running 9fellas On Pivotal Web Services
 
 Looking to run 9fellas on Cloud Foundry? Here’s some sample instructions for deploying 9fellas onto the hosted Pivotal Web Services cloud:
 
-1. Make sure you have Git installed, available from https://git-scm.com/
-2. Login to your Cloud Foundry cloud. You can sign up for a free trial from http://run.pivotal.io. Once you’re signed up, login to your Pivotal Web Services cloud with<br>
-  ```
-  cf login -a api.run.pivotal.io
-  ```
-3. Make sure your have the Cloud Foundry CF CLI installed, available from http://docs.run.pivotal.io/devguide/installcf/install-go-cli.html  
-4. Create a new local directory, and clone the 9fellas repo into the new local directory with<br>
-  ```
-  git clone https://github.com/mjeffries-pivotal/9fellas.git
-  ```
-<br>From this point on you'll work from your new local directory
-5.  Review the sample xyz-manifest.yml files, where "xyz" represents the IaaS for your targeted Cloud Foundry cloud.  Manifest files are optional but helpful
+.Instructions
+. Make sure you have Git installed, available from https://git-scm.com/
+. Login to your Cloud Foundry cloud. You can sign up for a free trial from http://run.pivotal.io. Once you’re signed up, login to your Pivotal Web
+Services cloud with:
++
+```
+cf login -a api.run.pivotal.io
+```
++
+. Make sure your have the Cloud Foundry CF CLI installed, available from http://docs.run.pivotal.io/devguide/installcf/install-go-cli.html
+. Create a new local directory, and clone the 9fellas repo into the new local directory.  From this point on you'll work from your new local directory.
++
+```
+git clone https://github.com/mjeffries-pivotal/9fellas.git
+```
++
+. Review the sample xyz-manifest.yml files, where "xyz" represents the IaaS for your targeted Cloud Foundry cloud.  Manifest files are optional but helpful
 to specify the metadata for your application.  Samples for *pws* and *openstack* are provided, just copy one of those if you are running on *aws*, *vcd*, or *vsphere*.
-6.  Update your manifest file to specify the name of the application, replacing "mj" below with your initials or something else to make it unique.  If you've
+. Update your manifest file to specify the name of the application, replacing "mj" below with your initials or something else to make it unique.  If you've
 created a new manifest file, also update the "cloud" value to one of the values mentioned above.  The "dashboard" values should point to the hostname where
-you want the consolidated dashboard to run.  The example below specifies PWS ("cfapps.io").
-Notice that this manifest has two "hosts" values defined.  This is only required for the manifest file associated with the cloud where
-the dashboard lives.  All other manifest files do not need the "hosts" section - see the openstack manifest file as an example.
+you want the consolidated dashboard to run.  The example below is for PWS, where PWS is also hosting the dashboard.
++
 ```
 ---
 applications:
@@ -44,21 +51,31 @@ applications:
     cloud: pws
   services:
   -  redis
-  ```
-7.  Create a shared Redis datastore. PWS offers a free tier 30mb plan that you can provision with<br>
-    ```
-    cf create-service rediscloud 30mb redis
-    ```
-<br>If you are running on your own Pivotal Cloud Foundry instance, use this instead<br>
-    ```
-    cf create-service p-redis shared-vm redis
-    ```
-8.  Deploy the application using your manifest file using<br>
-  ```
-  cf push -f xyz-manifest.yml
-  ```
-9.  The 9fellas app instances report to a URL using the "dashboard" environment variable, as mentioned above
-10.  Bring up your application in your browser using the first of the "urls" displayed when the push is completed, for example<br>
+```
++
+Notice that this manifest has two "hosts" values defined.  This is only required for the manifest file associated with the cloud where
+the dashboard lives.  All other manifest files do not need the "hosts" section - see the openstack manifest file as an example.
+. Create a shared Redis datastore service. PWS offers a free tier 30mb plan that you can provision with:
++
+```
+cf create-service rediscloud 30mb redis
+```
++
+If you are running on your own Pivotal Cloud Foundry instance, use this instead:
++
+```
+cf create-service p-redis shared-vm redis
+```
++
+. Deploy the application using your manifest file using:
++
+```
+cf push -f xyz-manifest.yml
+```
++
+. The 9fellas app instances all report to a URL using the "dashboard" environment variable, as mentioned above
+. Bring up your application in your browser using the first of the "urls" displayed when the push is completed, for example:
++
 ```
 requested state: started
 instances: 2/2
@@ -68,12 +85,15 @@ last uploaded: Fri Mar 18 15:17:02 UTC 2016
 stack: cflinuxfs2
 buildpack: python 1.5.4
 ```
-<br>Now you can add/delete fellas, and view the dashboard, which will show all the clouds where the application has been installed.
-10. Scale the app up to 6 instances to see more animal icons appear using<br>
-  ```
-  cf scale my-app-name -i 6 		
-  ```
-
++
+Now you can add or delete fellas, and view the dashboard, which will show all the fellas from all the clouds where the application has been installed.
+. Scale the app up to 6 instances to see more animal icons appear using:
++
+```
+cf scale my-app-name -i 6
+```
++
+You can also scale the application using the PWS/Apps Manager UI.
 
 Afterwards, tear down your app with:
 ```
