@@ -1,13 +1,10 @@
 ---
 applications:
-- name: 9fellas-metapod
+- name: 9fellas-cisco
   memory: 256M
   instances: 2
-  hosts:
-  -  9fellas-metapod
-  -  dashboard-9fellas-metapod
   env:
     dashboard: dashboard-9fellas-metapod.cfapps.io
-    cloud: pws
+    cloud: openstack
   services:
   -  redis
