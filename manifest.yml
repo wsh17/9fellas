@@ -2,7 +2,7 @@
 applications:
 - name: 9fellas-metapod
   memory: 256M
-  instances: 2
+  instances: 4
   env:
     dashboard: dashboard-9fellas-metapod.cfapps.io
     cloud: openstack
