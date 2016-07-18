@@ -145,7 +145,6 @@ def init_workers():
     c.start()
     m.start()
 
-
 @app.route('/addfella')
 def addfella():
     """
@@ -159,12 +158,13 @@ def addfella():
     if fella_count<9:
         fella_count+=1
         print 'fellacount ****************%s'%fella_count
+        result = db.hset(application_name,str(instance_id),str(fella_count))
         print 'HSET result %s'%result
         print db.hgetall(application_name)
     else:
         message = 'failed - no more fellas for instance %s'%instance_id
         print message
-        
+
     return json.dumps({'message':message})
 
 @app.route('/deletefella')
